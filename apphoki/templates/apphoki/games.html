@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games - Hoki Labs</title>
+    <link rel="stylesheet" href="{% static 'css/style3.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Hoki Labs Games</h1>
+        <nav>
+            <span class="user-info">Bem-vindo, {{ user.username }}!</span>
+            <a href="{% url 'apphoki:logout' %}" class="logout-btn">Sair</a>
+        </nav>
+    </header>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="games-grid">
+        <div class="game-card">
+            <img src="{% static 'css/img/arcade-game.png' %}" alt="Game 1">
+            <h3>Flipper Hoki</h3>
+            <p>Jogue agora!</p>
+            {% if highest_score %}
+                <p class="high-score">Seu recorde: {{ highest_score.score }} pontos</p>
+            {% else %}
+                <p class="high-score">Ainda sem recorde</p>
+            {% endif %}
+            <a href="{% url 'apphoki:flippyhoki' %}">
+                <button class="play-btn">Jogar</button>
+            </a>
+        </div>
+
+         <!--SPACE WARS-->
+
+        <div class="game-card">
+            <img src="{% static 'css/img/space-invaders.png' %}" alt="Game 1">
+            <h3>Space Wars</h3>
+            <p>Jogue agora!</p>
+            <p>R$: 2,50 para liberar acesso</p>
+            <a href="{% url 'apphoki:pays' %}">
+                <button class="play-btn">Comprar</button>
+            </a>
+        </div>
+        <!-- Adicione mais cards de jogos conforme necessário -->
+    </main>
+</body>
+</html>

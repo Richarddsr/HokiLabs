@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flippy Hoki</title>
+    <link rel="stylesheet" href="{% static 'css/style4.css' %}">
+</head>
+<body>
+    <h1>Flippy Hoki</h1>
+    <div class="game" id="game">
+        <div id="dino"></div>
+    </div>
+    <button class="reload-btn" id="reloadButton">Restart</button>
+
+    <a href="{% url 'apphoki:games' %}">
+        <button class="play-block">Retornar</button>
+    </a>
+    <div class="score">Pontuação: <span id="score">0</span></div>
+    <script src="{% static 'css/js/script.js' %}"></script>
+</body>
+</html>

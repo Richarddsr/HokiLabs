@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - Hoki Labs</title>
+    <link rel="stylesheet" href="{% static 'css/style3.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Pagamento de Jogos</h1>
+        <nav>
+            <a href="{% url 'apphoki:games' %}">
+                <button class="play-btn">Voltar</button>
+            </a>
+        </nav>
+    </header>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="games-grid">
+        <div class="game-card">
+            <h3>Space Wars</h3>
+            <p>Valor: R$ 2,50</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="play-btn">Confirmar Pagamento</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home labs</title>
+</head>
+<body>
+    <h1>Hoki Labs Home</h1>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <img src="{% static 'css/img/arcade-game.png' %}" alt="Exemplo de imagem" style="max-width: 80%; height: auto;">
+    <p>Seja bem-vindo a Hoki Labs!</p>
+    <p>Aqui você encontra todos jogos para arcade!<br>De forma simples e rápida!</p>
+    
+    <!-- Botão que redireciona para home_page -->
+    <a href="{% url 'apphoki:home_page' %}">
+        <button style="padding: 10px 20px; font-size: 16px;">Start</button>
+    </a>
+</body>
+</html>
