@@ -8,6 +8,7 @@ body {
     align-items: center;
     min-height: 100vh;
     color: #ffffff;
+    transition: background-color 1s ease;
 }
 
 h1 {
@@ -43,4 +44,82 @@ button {
 
 button:hover {
     background-color: #357abd;
+}
+
+#game {
+    width: 600px;
+    height: 200px;
+    border: 2px solid #4a90e2;
+    position: relative;
+    overflow: hidden;
+    background-color: #fff;
+    transition: all 1s ease;
+}
+
+#dino {
+    width: 50px;
+    height: 50px;
+    background-color: #333;
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+}
+
+.cactus {
+    width: 20px;
+    height: 40px;
+    background-color: #2ecc71;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.bird {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    background-color: #e74c3c;
+    border-radius: 50% 50% 30% 30%;
+    animation: flap 0.5s infinite alternate;
+    right: 0;
+}
+
+@keyframes flap {
+    from {
+        transform: scaleY(1) rotate(-10deg);
+    }
+    to {
+        transform: scaleY(0.8) rotate(10deg);
+    }
+}
+
+.level {
+    font-size: 24px;
+    color: #4a90e2;
+    margin-top: 20px;
+    transition: color 1s ease;
+}
+
+#score {
+    font-size: 24px;
+    color: #4a90e2;
+    position: absolute;
+    top: -30px;
+    right: 20px;
+    transition: color 1s ease;
+}
+
+#score::before {
+    content: "Score: ";
+}
+
+#totem-counter {
+    font-size: 24px;
+    color: #9b59b6;
+    text-align: center;
+    margin: 10px 0;
+}
+
+#totem-counter::before {
+    content: "Totems: ";
 }

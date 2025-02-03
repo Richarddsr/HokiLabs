@@ -1,6 +1,7 @@
 const dino = document.getElementById("dino");
 const game = document.getElementById("game");
 const scoreElement = document.getElementById("score");
+
 let isJumping = false;
 let gravity = 0.9;
 let position = 0;
@@ -12,15 +13,37 @@ const levelElement = document.createElement("div");
 levelElement.className = "level";
 game.parentNode.insertBefore(levelElement, game.nextSibling);
 
+// Função para gerar um número aleatório entre min e max
+function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // Função para atualizar a dificuldade
 function updateDifficulty() {
+    if (gameIsOver) return;
+    
     // Aumenta a velocidade e diminui o intervalo a cada 10 pontos
-    gameSpeed = 5 + Math.floor(score / 10);
-    spawnInterval = Math.max(1000, 2000 - (score * 50));
+    gameSpeed = 5 + Math.floor(score / 20); // Ajustado para pontuação x2
+    spawnInterval = Math.max(1000, 2000 - (score * 25)); // Ajustado para pontuação x2
     
     // Atualiza o nível
-    const level = Math.floor(score / 10) + 1;
+    const level = Math.floor(score / 20) + 1; // Ajustado para pontuação x2
     levelElement.textContent = `Nível ${level}`;
+
+    // Muda o fundo no nível 5
+    if (level === 5) {
+        game.style.backgroundColor = '#2c3e50'; // Cor mais escura
+        game.style.transition = 'background-color 1s';
+        document.body.style.backgroundColor = '#1a2634'; // Muda também o fundo do body
+        document.body.style.transition = 'background-color 1s';
+        levelElement.style.color = '#e74c3c'; // Muda a cor do nível para vermelho
+        scoreElement.style.color = '#e74c3c'; // Muda a cor do score para vermelho
+    } else if (level < 5) {
+        game.style.backgroundColor = '#fff';
+        document.body.style.backgroundColor = '#073047';
+        levelElement.style.color = '#4a90e2';
+        scoreElement.style.color = '#4a90e2';
+    }
 }
 
 // Controle do pulo
@@ -65,80 +88,165 @@ function jump() {
 function generateCactus() {
     if (gameIsOver) return;
     
-    let cactusPosition = game.offsetWidth;
     const cactus = document.createElement("div");
-    
     cactus.classList.add("cactus");
+    cactus.passed = false;
     game.appendChild(cactus);
-    cactus.style.right = "0px";
+    
+    let cactusPosition = -30;
+    cactus.style.right = cactusPosition + "px";
+
+    // Tamanho aleatório do cacto
+    const randomHeight = getRandomNumber(30, 50);
+    const randomWidth = getRandomNumber(20, 30);
+    cactus.style.height = randomHeight + 'px';
+    cactus.style.width = randomWidth + 'px';
 
     function moveCactus() {
         if (gameIsOver) {
-            cactus.remove();
+            if (cactus && cactus.parentNode) {
+                cactus.remove();
+            }
+            clearInterval(timerId);
             return;
         }
         
-        cactusPosition -= gameSpeed; // Usa a velocidade dinâmica
-        cactus.style.right = game.offsetWidth - cactusPosition + "px";
+        cactusPosition += gameSpeed;
+        cactus.style.right = cactusPosition + "px";
 
-        // Verificar colisão com precisão usando getBoundingClientRect
         const dinoRect = dino.getBoundingClientRect();
         const cactusRect = cactus.getBoundingClientRect();
         
-        // Verificação de colisão mais precisa
-        if (
-            dinoRect.right > cactusRect.left &&
+        if (dinoRect.right > cactusRect.left &&
             dinoRect.left < cactusRect.right &&
             dinoRect.bottom > cactusRect.top &&
-            dinoRect.top < cactusRect.bottom
-        ) {
+            dinoRect.top < cactusRect.bottom) {
+            
             clearInterval(timerId);
-            gameIsOver = true;
-            document.removeEventListener("keyup", control);
-            
-            // Salvar a pontuação
-            fetch('/flippyhoki/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: 'score=' + score
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert("Game Over! Pontuação: " + score + "\nPontuação salva com sucesso!");
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("Game Over! Pontuação: " + score);
-            });
-            
+            endGame();
             return;
         }
 
         // Atualizar pontuação quando o cacto passar pelo dino
-        if (cactusPosition < 50 && !cactus.passed) {
-            score++;
+        if (cactusPosition > game.offsetWidth - 50 && !cactus.passed) {
+            score += 2;  // Increased to 2 points
             cactus.passed = true;
             scoreElement.textContent = score;
-            updateDifficulty(); // Atualiza a dificuldade quando pontua
+            updateDifficulty();
         }
 
         // Remover cacto quando sair da tela
-        if (cactusPosition < -20) {
+        if (cactusPosition > game.offsetWidth + 100) {
+            if (cactus && cactus.parentNode) {
+                cactus.remove();
+            }
             clearInterval(timerId);
-            game.removeChild(cactus);
         }
     }
 
-    let timerId = setInterval(moveCactus, 20);
-    if (!gameIsOver) setTimeout(generateCactus, spawnInterval); // Usa o intervalo dinâmico
+    const timerId = setInterval(moveCactus, 20);
 }
 
-// Função para pegar o cookie do CSRF token
+// Gerar pássaros
+function generateBird() {
+    if (gameIsOver) return;
+    
+    const bird = document.createElement("div");
+    bird.classList.add("bird");
+    game.appendChild(bird);
+    
+    let birdPosition = -30;
+    let birdHeight = getRandomNumber(50, 150);
+    bird.style.right = birdPosition + "px";
+    bird.style.bottom = birdHeight + "px";
+
+    function moveBird() {
+        if (gameIsOver) {
+            if (bird && bird.parentNode) {
+                bird.remove();
+            }
+            clearInterval(birdTimerId);
+            return;
+        }
+
+        birdPosition += gameSpeed;
+        bird.style.right = birdPosition + "px";
+
+        const dinoRect = dino.getBoundingClientRect();
+        const birdRect = bird.getBoundingClientRect();
+
+        if (dinoRect.right > birdRect.left &&
+            dinoRect.left < birdRect.right &&
+            dinoRect.bottom > birdRect.top &&
+            dinoRect.top < birdRect.bottom) {
+            
+            clearInterval(birdTimerId);
+            endGame();
+            return;
+        }
+
+        // Remover pássaro quando sair da tela
+        if (birdPosition > game.offsetWidth + 100) {
+            if (bird && bird.parentNode) {
+                bird.remove();
+            }
+            clearInterval(birdTimerId);
+        }
+    }
+
+    const birdTimerId = setInterval(moveBird, 20);
+}
+
+// Função para gerar próximo obstáculo
+function generateNextObstacle() {
+    if (gameIsOver) return;
+
+    const level = Math.floor(score / 20) + 1;
+    
+    // Determina qual obstáculo gerar
+    if (level >= 5) {
+        // Em níveis mais altos, chance de gerar pássaro ou cacto
+        if (Math.random() < 0.3) {
+            generateBird();
+        } else {
+            generateCactus();
+        }
+    } else {
+        // Níveis iniciais, apenas cactos
+        generateCactus();
+    }
+
+    // Agendar próximo obstáculo
+    setTimeout(generateNextObstacle, spawnInterval);
+}
+
+// Função para finalizar o jogo
+function endGame() {
+    if (gameIsOver) return;
+    
+    gameIsOver = true;
+    document.removeEventListener("keyup", control);
+    
+    fetch('/flippyhoki/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: 'score=' + score
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert("Game Over!\nPontuação: " + score + "\nPontuação salva com sucesso!");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Game Over!\nPontuação: " + score);
+    });
+}
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -154,7 +262,10 @@ function getCookie(name) {
     return cookieValue;
 }
 
-generateCactus();
+// Inicializar o jogo
+scoreElement.textContent = "0";
+levelElement.textContent = "Nível 1";
+generateNextObstacle();
 document.addEventListener("keyup", control);
 
 document.addEventListener("DOMContentLoaded", function () {
