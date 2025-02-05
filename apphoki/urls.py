@@ -10,4 +10,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('flippyhoki/', views.flippyhoki_view, name='flippyhoki'),
     path('pays/', views.pays_view, name='pays'),
+    path('space-wars/', views.space_wars_view, name='space-wars'),
+    path('pixeldroid/', views.pixeldroid_view, name='pixeldroid'),
 ]

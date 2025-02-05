@@ -80,6 +80,14 @@ def pays_view(request):
     return render(request, 'apphoki/pays.html')
 
 @login_required
+def space_wars_view(request):
+    return render(request, 'apphoki/space-wars.html')
+
+@login_required
+def pixeldroid_view(request):
+    return render(request, 'apphoki/pixeldroid.html')
+
+@login_required
 def logout_view(request):
     logout(request)
     return redirect('apphoki:home')

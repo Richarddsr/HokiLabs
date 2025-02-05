@@ -92,3 +92,13 @@ h1 {
     color: #666;
     margin-top: 5px;
 }
+
+
+@keyframes flap {
+    from {
+        transform: scaleY(1) rotate(-10deg);
+    }
+    to {
+        transform: scaleY(0.8) rotate(10deg);
+    }
+}

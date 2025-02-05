@@ -7,8 +7,8 @@ let gravity = 0.9;
 let position = 0;
 let score = 0;
 let gameIsOver = false;
-let gameSpeed = 5; // Velocidade inicial
-let spawnInterval = 2000; // Intervalo inicial entre cactos
+let gameSpeed = 7; // Increased initial speed from 5 to 7
+let spawnInterval = 1800; // Reduced initial spawn interval from 2000 to 1800
 const levelElement = document.createElement("div");
 levelElement.className = "level";
 game.parentNode.insertBefore(levelElement, game.nextSibling);
@@ -23,22 +23,56 @@ function updateDifficulty() {
     if (gameIsOver) return;
     
     // Aumenta a velocidade e diminui o intervalo a cada 10 pontos
-    gameSpeed = 5 + Math.floor(score / 20); // Ajustado para pontuação x2
-    spawnInterval = Math.max(1000, 2000 - (score * 25)); // Ajustado para pontuação x2
+    gameSpeed = 7 + Math.floor(score / 20); // Increased base speed and made progression faster
+    
+    // New spawn interval calculation for higher levels
+    const level = Math.floor(score / 12) + 1;
+    if (level >= 10) {
+        spawnInterval = Math.max(800, 1400 - (score * 15)); // More aggressive decrease for high levels
+    } else if (level >= 5) {
+        spawnInterval = Math.max(1000, 1600 - (score * 20)); // Moderate decrease for mid levels
+    } else {
+        spawnInterval = Math.max(1200, 1800 - (score * 25)); // Original decrease for low levels
+    }
     
     // Atualiza o nível
-    const level = Math.floor(score / 20) + 1; // Ajustado para pontuação x2
     levelElement.textContent = `Nível ${level}`;
 
-    // Muda o fundo no nível 5
-    if (level === 5) {
+    // Muda o fundo no nível 5 ou superior
+    if (level >= 5) {
         game.style.backgroundColor = '#2c3e50'; // Cor mais escura
         game.style.transition = 'background-color 1s';
         document.body.style.backgroundColor = '#1a2634'; // Muda também o fundo do body
         document.body.style.transition = 'background-color 1s';
         levelElement.style.color = '#e74c3c'; // Muda a cor do nível para vermelho
         scoreElement.style.color = '#e74c3c'; // Muda a cor do score para vermelho
-    } else if (level < 5) {
+    } else {
+        game.style.backgroundColor = '#fff';
+        document.body.style.backgroundColor = '#073047';
+        levelElement.style.color = '#4a90e2';
+        scoreElement.style.color = '#4a90e2';
+    }
+
+      // Muda o fundo no nível 10 ou superior
+      if (level >= 10) {
+        game.style.backgroundColor = '#8e44ad'; // New background color
+        game.style.transition = 'background-color 1s';
+        document.body.style.backgroundColor = '#5e3370'; // New body background color
+        document.body.style.transition = 'background-color 1s';
+        levelElement.style.color = '#f39c12'; // New color for level text
+        scoreElement.style.color = '#f39c12'; // New color for score text
+
+        // Increase difficulty for level 10
+        gameSpeed += 2; // Increase speed
+        spawnInterval = Math.max(800, spawnInterval - 100); // Decrease spawn interval
+    } else if (level >= 5) {
+        game.style.backgroundColor = '#2c3e50'; // Existing level 5 color
+        game.style.transition = 'background-color 1s';
+        document.body.style.backgroundColor = '#1a2634'; // Existing level 5 body color
+        document.body.style.transition = 'background-color 1s';
+        levelElement.style.color = '#e74c3c'; // Existing level 5 color
+        scoreElement.style.color = '#e74c3c'; // Existing level 5 color
+    } else {
         game.style.backgroundColor = '#fff';
         document.body.style.backgroundColor = '#073047';
         levelElement.style.color = '#4a90e2';
@@ -59,7 +93,7 @@ function jump() {
     if (gameIsOver) return;
     
     isJumping = true;
-    let jumpForce = 20;
+    let jumpForce = 15; // Reduced from 20 to 15 for lower jump height
     let jumpVelocity = jumpForce;
     
     function applyGravity() {
@@ -97,7 +131,7 @@ function generateCactus() {
     cactus.style.right = cactusPosition + "px";
 
     // Tamanho aleatório do cacto
-    const randomHeight = getRandomNumber(30, 50);
+    const randomHeight = getRandomNumber(30, 100);
     const randomWidth = getRandomNumber(20, 30);
     cactus.style.height = randomHeight + 'px';
     cactus.style.width = randomWidth + 'px';
@@ -117,15 +151,17 @@ function generateCactus() {
         const dinoRect = dino.getBoundingClientRect();
         const cactusRect = cactus.getBoundingClientRect();
         
-        if (dinoRect.right > cactusRect.left &&
-            dinoRect.left < cactusRect.right &&
-            dinoRect.bottom > cactusRect.top &&
-            dinoRect.top < cactusRect.bottom) {
+        // Add a small buffer to make collision detection more forgiving
+        if (dinoRect.right - 5 > cactusRect.left &&
+            dinoRect.left + 5 < cactusRect.right &&
+            dinoRect.bottom - 5 > cactusRect.top &&
+            dinoRect.top + 5 < cactusRect.bottom) {
             
             clearInterval(timerId);
             endGame();
             return;
         }
+        
 
         // Atualizar pontuação quando o cacto passar pelo dino
         if (cactusPosition > game.offsetWidth - 50 && !cactus.passed) {
@@ -147,56 +183,6 @@ function generateCactus() {
     const timerId = setInterval(moveCactus, 20);
 }
 
-// Gerar pássaros
-function generateBird() {
-    if (gameIsOver) return;
-    
-    const bird = document.createElement("div");
-    bird.classList.add("bird");
-    game.appendChild(bird);
-    
-    let birdPosition = -30;
-    let birdHeight = getRandomNumber(50, 150);
-    bird.style.right = birdPosition + "px";
-    bird.style.bottom = birdHeight + "px";
-
-    function moveBird() {
-        if (gameIsOver) {
-            if (bird && bird.parentNode) {
-                bird.remove();
-            }
-            clearInterval(birdTimerId);
-            return;
-        }
-
-        birdPosition += gameSpeed;
-        bird.style.right = birdPosition + "px";
-
-        const dinoRect = dino.getBoundingClientRect();
-        const birdRect = bird.getBoundingClientRect();
-
-        if (dinoRect.right > birdRect.left &&
-            dinoRect.left < birdRect.right &&
-            dinoRect.bottom > birdRect.top &&
-            dinoRect.top < birdRect.bottom) {
-            
-            clearInterval(birdTimerId);
-            endGame();
-            return;
-        }
-
-        // Remover pássaro quando sair da tela
-        if (birdPosition > game.offsetWidth + 100) {
-            if (bird && bird.parentNode) {
-                bird.remove();
-            }
-            clearInterval(birdTimerId);
-        }
-    }
-
-    const birdTimerId = setInterval(moveBird, 20);
-}
-
 // Função para gerar próximo obstáculo
 function generateNextObstacle() {
     if (gameIsOver) return;
@@ -206,8 +192,10 @@ function generateNextObstacle() {
     // Determina qual obstáculo gerar
     if (level >= 5) {
         // Em níveis mais altos, chance de gerar pássaro ou cacto
-        if (Math.random() < 0.3) {
-            generateBird();
+        if (Math.random() < 0.2) { // Reduced bird spawn chance from 0.3 to 0.2
+            score += 5;  // Increased to 5 points
+            updateDifficulty();
+            generateCactus();
         } else {
             generateCactus();
         }

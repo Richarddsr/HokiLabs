@@ -1,0 +1,22 @@
+{% load static %}
+
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/pixeldroid.css' %}">
+</head>
+<body>
+    <div id="stats">
+        ❤️ HP: <span id="hp">100</span> | 
+                  PixelDroid
+    </div>
+    <div id="gameArea">
+        <div id="player"></div>
+    </div>
+    <button class="reload-btn" id="reloadButton">Restart</button>
+    <a href="{% url 'apphoki:games' %}">
+        <button class="play-block">Retornar</button>
+    </a>
+    <div class="score">Pontuação: <span id="score">0</span></div>
+    <script src="{% static 'css/js/pixeldroid.js' %}"></script>
+</body>
+</html>

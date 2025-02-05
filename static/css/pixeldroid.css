@@ -1,0 +1,131 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #164966;
+    margin: 0;
+    padding: 20px;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#gameArea {
+    width: 600px;
+    height: 400px;
+    border: 5px solid #272727;
+    border-radius: 10px;
+    position: relative;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(38, 21, 85, 0.3);
+    margin-top: 20px;
+}
+
+#player {
+    width: 30px;
+    height: 30px;
+    background: #333;
+    position: absolute;
+    transition: transform 0.1s ease-out;
+    box-shadow: 0 0 10px rgba(38, 21, 85, 0);
+    border-radius: 5px;
+    transform-origin: center;
+    animation: pulse 2s infinite;
+    will-change: transform, left, top;
+}
+
+.enemy {
+    width: 30px;
+    height: 30px;
+    background: #2d572c;
+    position: absolute;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(45, 87, 44, 0.6);
+    animation: float 3s infinite ease-in-out;
+}
+
+#stats {
+    padding: 15px 30px;
+    border-radius: 20px;
+    margin: 20px 0;
+    color: #ffffff;
+    font-size: 18px;
+    box-shadow: 0 0 10px rgba(38, 21, 85, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(5px); }
+    100% { transform: translateY(0px); }
+}
+
+.hit-effect {
+    position: absolute;
+    pointer-events: none;
+    animation: hitFlash 0.5s forwards;
+}
+
+@keyframes hitFlash {
+    0% { 
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% { 
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+button:hover {
+    background-color: #357abd;
+}
+
+.reload-btn {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.reload-btn:hover {
+    background-color: #357abd;
+}
+
+.score {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    margin-top: 10px;
+    color: #ffffff;
+}
