@@ -31,8 +31,8 @@
             <img src="{% static 'css/img/arcade-game.png' %}" alt="Game 1">
             <h3>Flipper Hoki</h3>
             <p>Jogue agora!</p>
-            {% if highest_score %}
-                <p class="high-score">Seu recorde: {{ highest_score.score }} pontos</p>
+            {% if flippy_score %}
+                <p class="high-score">Seu recorde: {{ flippy_score.score }} pontos</p>
             {% else %}
                 <p class="high-score">Ainda sem recorde</p>
             {% endif %}
@@ -59,9 +59,13 @@
             <img src="{% static 'css/img/recreational (1).png' %}" alt="Game 1">
             <h3>PixelDroid</h3>
             <p>Jogue agora!</p>
-            <p>R$: 2,50 para liberar acesso</p>
+            {% if pixeldroid_score %}
+                <p class="high-score">Seu recorde: {{ pixeldroid_score.score }} pontos</p>
+            {% else %}
+                <p class="high-score">Ainda sem recorde</p>
+            {% endif %}
             <a href="{% url 'apphoki:pixeldroid' %}">
-                <button class="play-btn">Comprar</button>
+                <button class="play-btn">Jogar</button>
             </a>
         </div>
         <!-- Adicione mais cards de jogos conforme necessário -->

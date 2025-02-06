@@ -35,7 +35,7 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #164966;
+    background-color: #141414;
     margin: 0;
     padding: 0;
     color: #ffffff;
@@ -43,14 +43,15 @@ body {
 }
 
 button {
-    background-color: #4a90e2;
+    background-color: rgba(59, 59, 59, 0.644);
     color: white;
-    border: none;
+    border: 1px solid #ffffff;
     border-radius: 5px;
-    padding: 12px 25px;
+    padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 10px;
     position: fixed;
     bottom: 50px; /* Distância da parte inferior */
     left: 50%; /* Centraliza horizontalmente */
@@ -63,19 +64,24 @@ button:hover {
 }
 
 button.reload-btn {
-    background-color: #4a90e2;
+    background-color: rgba(59, 59, 59, 0.644);
     color: white;
-    border: none;
+    border: 1px solid #ffffff;
     border-radius: 5px;
-    padding: 12px 25px;
+    padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 10px;
     position: fixed;
     bottom: 100px; /* Distância da parte inferior */
     left: 50%; /* Centraliza horizontalmente */
     transform: translateX(-50%); /* Ajusta para o centro exato */
     padding: 10px 20px;
+}
+
+button:hover {
+    background-color: #357abd;
 }
 
 h1 {

@@ -52,7 +52,10 @@ function createEnemy() {
     enemies.push({
         element: enemy,
         x: x,
-        y: y
+        y: y,
+        speed: 1 + Math.random() * 0.5, // Random speed between 1 and 2
+        velocityX: 0,
+        velocityY: 0
     });
 }
 
@@ -108,8 +111,36 @@ function movePlayer() {
     updatePlayer();
 }
 
+function moveEnemies() {
+    enemies.forEach(enemy => {
+        // Calculate direction to player
+        const dx = player.x - enemy.x;
+        const dy = player.y - enemy.y;
+        
+        // Normalize the direction
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance > 0) {
+            const dirX = dx / distance;
+            const dirY = dy / distance;
+            
+            // Update enemy position
+            enemy.x += dirX * enemy.speed;
+            enemy.y += dirY * enemy.speed;
+            
+            // Keep enemy within bounds
+            enemy.x = Math.max(0, Math.min(570, enemy.x));
+            enemy.y = Math.max(0, Math.min(370, enemy.y));
+            
+            // Update enemy element position
+            enemy.element.style.left = enemy.x + 'px';
+            enemy.element.style.top = enemy.y + 'px';
+        }
+    });
+}
+
 function gameLoop() {
-    movePlayer(); // Add movement update to game loop
+    movePlayer();
+    moveEnemies(); // Add enemy movement
     
     enemies.forEach((enemy, index) => {
         if (checkCollision(player, enemy)) {
@@ -122,6 +153,16 @@ function gameLoop() {
     });
 
     if (player.hp <= 0) {
+        // Send score to server
+        fetch('/pixeldroid/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: 'score=' + score
+        });
+
         alert('Game Over! Pontuação: ' + score);
         player.hp = 100;
         score = 0;
@@ -164,3 +205,19 @@ player.x = 300;
 player.y = 200;
 updatePlayer();
 gameLoop();
+
+// Add getCookie function at the end of the file
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

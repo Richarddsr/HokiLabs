@@ -12,18 +12,41 @@ def home_view(request):
 
 @login_required
 def games_view(request):
-    # Pegar a maior pontuação do usuário
-    highest_score = PlayerScore.objects.filter(user=request.user).order_by('-score').first()
-    return render(request, 'apphoki/games.html', {'highest_score': highest_score})
+    # Get highest scores for each game
+    flippy_score = PlayerScore.objects.filter(user=request.user, game='flippy').order_by('-score').first()
+    pixeldroid_score = PlayerScore.objects.filter(user=request.user, game='pixeldroid').order_by('-score').first()
+    
+    context = {
+        'flippy_score': flippy_score,
+        'pixeldroid_score': pixeldroid_score,
+    }
+    return render(request, 'apphoki/games.html', context)
 
 @login_required
 def flippyhoki_view(request):
     if request.method == 'POST':
         score = request.POST.get('score')
         if score:
-            PlayerScore.objects.create(user=request.user, score=int(score))
+            PlayerScore.objects.create(
+                user=request.user,
+                score=int(score),
+                game='flippy'
+            )
             return JsonResponse({'status': 'success'})
-    return render(request, 'flippyhoki.html')
+    return render(request, 'apphoki/flippyhoki.html')
+
+@login_required
+def pixeldroid_view(request):
+    if request.method == 'POST':
+        score = request.POST.get('score')
+        if score:
+            PlayerScore.objects.create(
+                user=request.user,
+                score=int(score),
+                game='pixeldroid'
+            )
+            return JsonResponse({'status': 'success'})
+    return render(request, 'apphoki/pixeldroid.html')
 
 def home_page_view(request):
     if request.user.is_authenticated:
@@ -82,10 +105,6 @@ def pays_view(request):
 @login_required
 def space_wars_view(request):
     return render(request, 'apphoki/space-wars.html')
-
-@login_required
-def pixeldroid_view(request):
-    return render(request, 'apphoki/pixeldroid.html')
 
 @login_required
 def logout_view(request):
